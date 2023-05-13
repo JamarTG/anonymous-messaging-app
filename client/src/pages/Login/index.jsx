@@ -4,6 +4,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { useState, useRef, useContext } from "react";
 import userContext from "../../../contexts/userContext";
+import {toast} from "react-toastify";
 
 export default function Login() {
     const [isChecked, setIsChecked] = useState(false);
@@ -32,18 +33,20 @@ export default function Login() {
             localStorage.setItem("user", JSON.stringify(user));
         } catch {
             // use toast to indicate failed login
+            toast.error("Invalid Credentials... please try again.")
+            passwordInputReference.current.value = ""
             console.log("error");
         }
     }
     return (
         <form
             onSubmit={handleSubmission}
-            className="container mx-auto w-full md:w-[350px] px-4 shadow-lg py-4 text-white/80 mt-20 space-y-4 min-h-screen"
+            className="container mx-auto w-full md:w-[350px] px-4 shadow-lg py-4 text-white/80 mt-20 space-y-4"
         >
             <h1 className="text-green-400 text-3xl text-center">LOGIN</h1>
             <p>
                 Welcome back to Anonymous Link. Please enter your credentials to
-                continue
+                continue...
             </p>
             <div className="space-y-4 mt-4">
                 <div className="relative">
@@ -53,6 +56,7 @@ export default function Login() {
                         className="floating-input peer"
                         name="username"
                         ref={usernameInputReference}
+                        placeholder=" "
                     />
                     <label htmlFor="username" className="floating-label">
                         Username
@@ -65,6 +69,7 @@ export default function Login() {
                         id="password"
                         className="floating-input peer"
                         ref={passwordInputReference}
+                        placeholder=" "
                     />
                     <label htmlFor="password" className="floating-label">
                         Password
@@ -85,7 +90,7 @@ export default function Login() {
             </div>
             <button
                 type="submit"
-                className="text-white/80 font-bold rounded-lg px-4 py-2 ring-2 ring-green-400 mt-4 transition mx-auto block hover:bg-green-400 hover:text-black"
+                className="text-white/80  btn-primary ring-2 ring-green-400 mt-4 transition mx-auto block hover:bg-green-400 hover:text-black"
             >
                 Login
             </button>

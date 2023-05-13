@@ -4,7 +4,41 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 
+import { toast } from "react-toastify"
+
+import validator from "validator"
+
+const toastOptions = {
+    autoClose: 2000
+}
+
+function validate(email, password) {
+    let valid = true
+    let passwordOptions = {
+        minLength: 6,
+        minLowercase: 0,
+        minUppercase: 0,
+        minNumbers: 0,
+        minSymbols: 0,
+    }
+
+    if(!validator.isEmail(email)) {
+        valid = false
+        toast.warn("Please enter a valid Email", toastOptions)
+    }
+
+    if(!validator.isStrongPassword( password, passwordOptions)) {
+        toast.warn("Please enter a valid password", toastOptions)
+        // console.log("Error password")
+        
+        valid = false
+    }
+    
+    return valid
+}
+
 export default function SignUp() {
+    // console.log(validateForm)
     const [isChecked, setIsChecked] = useState(false);
 
     const firstNameInputReference = useRef("");
@@ -32,14 +66,22 @@ export default function SignUp() {
         };
 
         try {
+
+            if(!validate(formData.email, formData.password)) {return}
+            
             const user = await axios.post(registrationEndpoint, formData);
             // use toast to indicate success
+            toast.success("Registration completed!", toastOptions)
+            navigate("/login");
+            console.log(user);
         } catch (error) {
             // use toast to indicate error
-        }
+            // try to see if you can tell that username/email already used
+            toast.error("Invalid Credentials.", toastOptions)
+            console.log(error)
 
-        navigate("/login");
-        console.log(user);
+        }
+        
     }
 
     return (
@@ -48,7 +90,7 @@ export default function SignUp() {
             className="container mx-auto w-full md:w-[350px] px-4 shadow-lg py-4 text-white/80 mt-20 min-h-screen space-y-4"
         >
             <h1 className="text-green-400 text-3xl text-center">Signup</h1>
-            <p>To get started in receiving Anonymous Messages please signup.</p>
+            <p>To get started in receiving <span className="text-green-400">Anonymous Messages</span> please signup.</p>
 
             <div className="space-y-4 mt-4">
                 <div className="relative">
@@ -57,8 +99,9 @@ export default function SignUp() {
                         id="firstname"
                         className="floating-input peer"
                         name="firstname"
-                        placeholder=""
+                        placeholder=" "
                         ref={firstNameInputReference}
+                        maxLength="30"
                     />
                     <label htmlFor="firstname" className="floating-label">
                         Firstname
@@ -71,8 +114,10 @@ export default function SignUp() {
                         id="lastname"
                         className="floating-input peer"
                         name="lastname"
-                        placeholder=""
+                        placeholder=" "
                         ref={lastNameInputReference}
+                        maxLength="30"
+
                     />
                     <label htmlFor="lastname" className="floating-label">
                         Lastname
@@ -85,8 +130,10 @@ export default function SignUp() {
                         id="username"
                         className="floating-input peer"
                         name="username"
-                        placeholder=""
+                        placeholder=" "
                         ref={usernameInputReference}
+                        maxLength="30"
+
                     />
                     <label htmlFor="username" className="floating-label">
                         Username
@@ -99,7 +146,7 @@ export default function SignUp() {
                         id="email"
                         className="floating-input peer"
                         name="email"
-                        placeholder=""
+                        placeholder=" "
                         ref={emailInputReference}
                     />
                     <label htmlFor="email" className="floating-label">
@@ -112,7 +159,7 @@ export default function SignUp() {
                         type={isChecked ? "text" : "password"}
                         id="password"
                         className="floating-input peer"
-                        placeholder=""
+                        placeholder=" "
                         ref={passwordInputReference}
                     />
                     <label htmlFor="password" className="floating-label">
@@ -136,7 +183,7 @@ export default function SignUp() {
 
             <button
                 type="submit"
-                className="text-white/80 font-bold rounded-lg px-4 py-2 ring-2 ring-green-400 mt-4 transition mx-auto block hover:bg-green-400 hover:text-black"
+                className="text-white/80 btn-primary ring-2 ring-green-400 mt-4 transition mx-auto block hover:bg-green-400 hover:text-black"
             >
                 Get Started
             </button>
