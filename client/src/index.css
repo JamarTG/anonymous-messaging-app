@@ -22,6 +22,11 @@
 
   * {
     font-family: "Righteous";
+    box-sizing: border-box;
+  }
+
+  .btn-primary {
+    @apply px-4 py-2 rounded-lg text-white font-light;
   }
 
   label {
