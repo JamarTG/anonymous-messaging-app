@@ -5,8 +5,12 @@ import { useState, useContext, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import generateRandomNickname from "../../utilities/nameGenerator";
 
+import { Link } from "react-router-dom"
+import { toast } from "react-toastify"
+
 export default function SendMessage() {
     const { username } = useParams();
+    const toastId= "empty-msg-toast"
 
     const [anonymousUser, setAnonymousUser] = useState({
         name: "Random Noob",
@@ -35,15 +39,33 @@ export default function SendMessage() {
     async function handleMessageSubmission() {
         const messageEndPoint = `http://localhost:3000/messages/${username}`;
 
+        if(message.trim() == "") {
+            // toast will not duplicate while 1 is visible
+            //  although the handleMessageSubmission function will still run
+            toast.warn("Message body can't be empty.", {toastId: toastId})
+            return
+        }
+
         async function determineIfUserExists() {
-            return await axios
+            // was an error with an uncaught exception fixed it 
+            try {
+                const res = await axios
                 .get(`http://localhost:3000/user/${username}`)
                 .then((response) => setUserId(response.data));
+
+                return res
+            }catch(err) {
+                console.error(err)
+                // toast.error("Error sending message")
+            }
+            
         }
 
         await determineIfUserExists().then(async function () {
             if (!userId) {
+                // alert("User dont exist")
                 // create a toast to indicate that you can't send a message to that person
+                toast.warn("Error this user don't exist")
                 return;
             }
 
@@ -60,21 +82,29 @@ export default function SendMessage() {
                 await axios.post(messageEndPoint, messageData);
 
                 // toast to indicate success sending the message
+                // smth sus is happening here i think
+                // it seems like it takes a while to check if the user exist
+                // cause i get the user dont exist error and then the second time it works
+                toast.success("Message sent!")
+                setMessage("")
             } catch (error) {
                 const errorStatus = error.response.data.s;
-
+                toast.error("Error sending message!!")
                 console.log(messageData);
                 // Please use appropriate toast messages and not what I write in comments
 
                 switch (errorStatus) {
                     case 404:
                         // The user was not found
+                        toast.error("User not found")
                         break;
                     case 401:
                         // creating the message failed - prolly bad request
+                        toast.error("Error sending message. Try again later.")
                         break;
                     case 500:
                         // server error :(
+                            toast.error("Server error. It's us not you.")
                         break;
                     default:
                     // Unknown error
@@ -141,14 +171,17 @@ export default function SendMessage() {
                 maxLength="255"
                 className="text-white px-4 py-4 bg-gray-700 rounded-lg outline-0 resize-none w-full md:w-4/5 mx-auto ring-2 block  ring-green-400"
                 onChange={handleChange}
-                placeholder={`Send a message...`}
+                placeholder={`${username} will never know who sent this message🙈...`}
+                value={message}
             ></textarea>
             <button
-                className="text-white px-4 py-3 rounded bg-green-600 shadow-lg block my-4 mx-auto"
+                className="text-white px-4 py-3 rounded bg-green-400 shadow-lg block my-4 mx-auto hover:bg-green-500 hover:scale-95 transition"
                 onClick={handleMessageSubmission}
             >
                 Send Message
             </button>
+
+            <p className="text-white my-4">If you ever want your own personal link to send to your friends and receive <span className="text-green-400">anonymous messages</span> you can always <Link to="/signup" className="text-green-400 underline">SIGN UP!</Link></p>
 
             <h2 className="text-white text-3xl underline text-center">
                 Terms and Conditions
