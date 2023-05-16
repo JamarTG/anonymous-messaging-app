@@ -51,7 +51,7 @@ function App() {
                     <Route path="/logout" element={<Logout />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
-                {user && <Footer />}
+                {/* {user && <Footer />} */}
             </UserContext.Provider>
         </BrowserRouter>
     );

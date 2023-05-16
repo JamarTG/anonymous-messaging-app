@@ -59,10 +59,10 @@ export default function SignUp() {
 
         const formData = {
             firstName: firstNameInputReference.current.value,
-            lastName: lastNameInputReference.current.value,
-            username: usernameInputReference.current.value,
-            email: emailInputReference.current.value,
-            password: passwordInputReference.current.value,
+            lastName:  lastNameInputReference.current.value,
+            username:  usernameInputReference.current.value,
+            email:     emailInputReference.current.value,
+            password:  passwordInputReference.current.value,
         };
 
         try {
@@ -133,6 +133,7 @@ export default function SignUp() {
                         placeholder=" "
                         ref={usernameInputReference}
                         maxLength="30"
+                        minLength="3"
 
                     />
                     <label htmlFor="username" className="floating-label">

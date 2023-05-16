@@ -4,7 +4,7 @@ export default function RelativeDate({date}) {
     const result = formatDistance( date, Date.now(), {addSuffix: true})
     
     return (
-        <div className=' text-xs absolute bottom-1 right-0 px-2 text-gray-300'>
+        <div className=' text-xs ml-auto'>
             <p>{result}</p>
         </div>
     )
