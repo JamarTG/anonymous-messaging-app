@@ -5,17 +5,12 @@ import userContext from "../../contexts/userContext"
 import { useContext, useEffect, useState } from "react"
 
 
-export default function MessageBox({ message: content, date, sender, senderId, userToReplyTo, setUserToReplyTo }) {
+export default function MessageBox({ message: content, date, sender, senderId }) {
     const { user, setUser } = useContext(userContext);
     const [isUserMessage, setIsUserMessage] = useState(false)
 
-    // The width should be determine by the size of the text but be careful
 
     useEffect(function () {
-
-        if (user._id === senderId) {
-            setIsUserMessage(true);
-        }
     }, [])
 
     return (
@@ -26,14 +21,6 @@ export default function MessageBox({ message: content, date, sender, senderId, u
             <p className="">{content}</p>
 
             <div className="flex justify-between pt-2 gap-2 text-slate-400">
-                <span className={`${isUserMessage ? "hidden" : "block"} text-right`}>
-                    {
-                    userToReplyTo && 
-                        <Sender name={sender} id={senderId}
-                        isUserMessage={isUserMessage}
-                        userToReplyTo={userToReplyTo}
-                        setUserToReplyTo={setUserToReplyTo} />}
-                </span>
                 <RelativeDate date={date} />
             </div>
         </div>

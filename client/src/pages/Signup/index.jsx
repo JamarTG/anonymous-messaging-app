@@ -3,42 +3,36 @@ import axios from "axios";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
-
 import { toast } from "react-toastify"
+import * as yup from 'yup';
 
-import validator from "validator"
 
-const toastOptions = {
-    autoClose: 2000
-}
 
-function validate(email, password) {
-    let valid = true
-    let passwordOptions = {
-        minLength: 6,
-        minLowercase: 0,
-        minUppercase: 0,
-        minNumbers: 0,
-        minSymbols: 0,
-    }
+const validationSchema = yup.object().shape({
+    firstName : yup
+        .string()
+        .required("First name is required"),
+    lastName  : yup
+        .string()
+        .required("Last name is required"),
+    username  : yup
+        .string()
+        .required("Username is required"),
+    email     : yup
+        .string()
+        .required("Email is required")
+        .email("Invalid email"),
+    password  : yup.string()
+        .required('Password is required')
+        .min(8, 'Password must be at least 8 characters long'),
+});
 
-    if(!validator.isEmail(email)) {
-        valid = false
-        toast.warn("Please enter a valid Email", toastOptions)
-    }
-
-    if(!validator.isStrongPassword( password, passwordOptions)) {
-        toast.warn("Please enter a valid password", toastOptions)
-        // console.log("Error password")
-        
-        valid = false
-    }
-    
-    return valid
+const routes = {
+    homeRoute : "/",
+    loginRoute : "/login",
 }
 
 export default function SignUp() {
-    // console.log(validateForm)
     const [isChecked, setIsChecked] = useState(false);
 
     const firstNameInputReference = useRef("");
@@ -52,6 +46,8 @@ export default function SignUp() {
     async function handleShowPasswordChange(event) {
         setIsChecked(!isChecked);
     }
+
+    const toastOptions = {autoClose : 700}
 
     async function handleSubmission(event) {
         event.preventDefault();
@@ -67,19 +63,16 @@ export default function SignUp() {
 
         try {
 
-            if(!validate(formData.email, formData.password)) {return}
-            
-            const user = await axios.post(registrationEndpoint, formData);
-            // use toast to indicate success
-            toast.success("Registration completed!", toastOptions)
-            navigate("/login");
-            console.log(user);
-        } catch (error) {
-            // use toast to indicate error
-            // try to see if you can tell that username/email already used
-            toast.error("Invalid Credentials.", toastOptions)
-            console.log(error)
+            validationSchema.validateSync(formData);
 
+            const a = await axios.post(registrationEndpoint, formData)
+            console.log(a)
+            const toastMessage = 'Registration completed!';
+            toast.success(toastMessage, toastOptions)
+            navigate("/login");
+   
+        } catch (error) {
+            console.log(error)
         }
         
     }
@@ -132,8 +125,6 @@ export default function SignUp() {
                         name="username"
                         placeholder=" "
                         ref={usernameInputReference}
-                        maxLength="30"
-                        minLength="3"
 
                     />
                     <label htmlFor="username" className="floating-label">
@@ -184,13 +175,12 @@ export default function SignUp() {
 
             <button
                 type="submit"
-                className="text-white/80 btn-primary ring-2 ring-green-400 mt-4 transition mx-auto block hover:bg-green-400 hover:text-black"
-            >
+                className="text-white/80 btn-primary ring-2 ring-green-400 mt-4 transition mx-auto block hover:bg-green-400 hover:text-black">
                 Get Started
             </button>
 
             <p className="text-center">
-                Already have an account?{" "}
+                {"Already have an account? "}
                 <Link to="/login" className="text-green-400 underline">
                     Log In!
                 </Link>

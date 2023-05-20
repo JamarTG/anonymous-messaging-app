@@ -1,0 +1,1 @@
+the toasts take too long to close. use `{autoClose : 500}`

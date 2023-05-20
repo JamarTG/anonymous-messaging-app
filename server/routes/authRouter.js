@@ -2,15 +2,14 @@ import express from "express";
 import User from '../schemas/userSchema.js'
 import dotenv from "dotenv";
 import mongodb from "../database/mongodb.js";
-
-// I need to handle web tokens
+import errorController from "../controllers/errorController.js";
 
 mongodb.connectToDatabase();
 dotenv.config();
 
 const authRouter = express.Router();
 
-authRouter.post("/login", async function(req, res) {
+authRouter.post("/login", async function (req, res) {
     const {
         username,
         password
@@ -22,15 +21,14 @@ authRouter.post("/login", async function(req, res) {
             username: username.toLowerCase()
         });
         if (!user) {
-            return res.status(404).send("User not found");
+            // if you don't have an user it means the user has not been found with that name
+            return res.status(404).send("User not found. Try again.");
         }
 
         const result = await user.comparePassword(password);
-        if (!result) {
-            return res.status(401).send("Incorrect password");
+        if (!result){
+            return res.status(401).send("Invalid password.Try again");
         }
-        // const token = jwt.sign({ username }, process.env.ENCRYPTION_KEY);
-        // res.json({ token, user });
         res.json(user)
     } catch (error) {
         console.error(error);
@@ -38,8 +36,7 @@ authRouter.post("/login", async function(req, res) {
     }
 });
 
-
-authRouter.post("/register", async function(req, res) {
+authRouter.post("/register", async function (req, res) {
     const {
         firstName,
         lastName,
@@ -48,28 +45,20 @@ authRouter.post("/register", async function(req, res) {
         password
     } = req.body;
 
-    try {
-        const user = new User({
-            firstName,
-            lastName,
-            username,
-            password,
-            email,
-            messages: []
-        });
+    const user = new User({
+        firstName,
+        lastName,
+        username,
+        password,
+        email,
+        messages: []
+    });
 
-
-
-        user.save();
-
+    await user.save().then(function () {
         res.status(201).json(user.toObject());
-
-    } catch (error) {
-
-        console.error(error);
-        res.status(500).send("Internal Server Error");
-
-    }
+    }).catch(function (error) {
+        res.status(500).json(errorController(error));
+    })
 });
 
 export default authRouter;

@@ -31,11 +31,14 @@ export default function Login() {
             const response = await axios.post(loginEndPoint, formData);
             setUser(response.data);
             localStorage.setItem("user", JSON.stringify(user));
-        } catch {
-            // use toast to indicate failed login
-            toast.error("Invalid Credentials... please try again.")
+        } catch(error){
+        
+            if(!error.response){
+                toast.error(error.message ? error.message : "Something went wrong.")
+            }
+            toast.error(error.response.data ? error.response.data : "Something went wrong.")
             passwordInputReference.current.value = ""
-            console.log("error");
+      
         }
     }
     return (

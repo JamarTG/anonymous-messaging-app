@@ -30,6 +30,31 @@
     /* border: 1px solid red; */
   }
 
+  .container-with-scrollbar {
+
+    border-radius: 8px; /* Replace with your desired border radius */
+    padding: 10px;
+    width: 70vw;
+    max-height: 60vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  
+  .container-with-scrollbar::-webkit-scrollbar {
+    width: 8px; /* Adjust the width of the scrollbar */
+  }
+  
+  .container-with-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #666; /* Replace with your desired thumb color */
+    border-radius: 4px; /* Adjust the border radius of the thumb */
+  }
+  
+  .container-with-scrollbar::-webkit-scrollbar-track {
+    background-color: #ddd; /* Replace with your desired track color */
+    border-radius: 4px; /* Adjust the border radius of the track */
+  }
+  
+
   .btn-primary {
     @apply px-4 py-2 rounded-lg text-white font-light;
   }
@@ -42,9 +67,7 @@
     animation-delay: 500ms;
   }
 
-  input {
 
-  }
 
   h1 span {
     background-image: url(/vite.svg);
@@ -66,9 +89,7 @@
   .talk-bubble p {
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif!important ;
   }
-  .border{
-    /* border: 8px solid #666; */
-  }
+
 
   /* .tri-right.left-top:before {
     content: ' ';

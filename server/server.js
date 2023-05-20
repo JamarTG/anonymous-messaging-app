@@ -4,7 +4,6 @@ import userRouter from './routes/userRouter.js';
 import express from 'express'
 import mongodb from './database/mongodb.js';
 import cors from 'cors';
-
 const app = express();
 
 mongodb.connectToDatabase();
